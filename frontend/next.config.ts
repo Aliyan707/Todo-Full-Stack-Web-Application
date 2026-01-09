@@ -14,7 +14,8 @@ const nextConfig: NextConfig = {
   },
 
   // Performance optimizations
-  reactStrictMode: true,
+  // Temporarily disable strict mode to debug blinking issue
+  reactStrictMode: false,
 
   // Environment variables (if needed)
   env: {
