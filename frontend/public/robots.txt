@@ -1,0 +1,9 @@
+# Advanced To-Do App - Robots.txt
+# Allow all user-agents to crawl public pages
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+
+# Sitemap location
+Sitemap: https://advanced-todo-app.vercel.app/sitemap.xml

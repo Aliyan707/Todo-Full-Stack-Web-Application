@@ -1,0 +1,65 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background card -->
+  <rect x="20" y="20" width="360" height="260" rx="16" fill="#1a2e26" opacity="0.9"/>
+  <rect x="20" y="20" width="360" height="260" rx="16" stroke="#2d5548" stroke-width="2"/>
+
+  <!-- Header section -->
+  <rect x="40" y="40" width="120" height="24" rx="6" fill="#1a5c47"/>
+  <text x="100" y="58" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#e8f5f0" text-anchor="middle">My Tasks</text>
+
+  <!-- Task 1 - Completed -->
+  <g transform="translate(40, 90)">
+    <!-- Checkbox - checked -->
+    <rect width="24" height="24" rx="6" fill="#3d9970"/>
+    <path d="M7 12L11 16L17 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Task text - strikethrough -->
+    <line x1="40" y1="12" x2="280" y2="12" stroke="#a8c9bc" stroke-width="1.5"/>
+    <rect x="40" y="4" width="180" height="16" rx="4" fill="#2d7a5f" opacity="0.2"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="14" fill="#a8c9bc">Review project proposal</text>
+  </g>
+
+  <!-- Task 2 - Active -->
+  <g transform="translate(40, 130)">
+    <!-- Checkbox - unchecked -->
+    <rect width="24" height="24" rx="6" fill="none" stroke="#3d9970" stroke-width="2"/>
+
+    <!-- Task text -->
+    <rect x="40" y="4" width="240" height="16" rx="4" fill="#1a5c47" opacity="0.3"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="14" fill="#e8f5f0">Update dashboard components</text>
+  </g>
+
+  <!-- Task 3 - Active -->
+  <g transform="translate(40, 170)">
+    <!-- Checkbox - unchecked -->
+    <rect width="24" height="24" rx="6" fill="none" stroke="#3d9970" stroke-width="2"/>
+
+    <!-- Task text -->
+    <rect x="40" y="4" width="200" height="16" rx="4" fill="#1a5c47" opacity="0.3"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="14" fill="#e8f5f0">Fix authentication bugs</text>
+  </g>
+
+  <!-- Task 4 - Active with priority indicator -->
+  <g transform="translate(40, 210)">
+    <!-- Checkbox - unchecked -->
+    <rect width="24" height="24" rx="6" fill="none" stroke="#3d9970" stroke-width="2"/>
+
+    <!-- Priority dot -->
+    <circle cx="315" cy="12" r="4" fill="#e74c3c"/>
+
+    <!-- Task text -->
+    <rect x="40" y="4" width="260" height="16" rx="4" fill="#1a5c47" opacity="0.3"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="14" fill="#e8f5f0">Deploy to production environment</text>
+  </g>
+
+  <!-- Decorative geometric shapes -->
+  <circle cx="350" cy="50" r="15" fill="#3d9970" opacity="0.15"/>
+  <rect x="330" y="240" width="30" height="30" rx="6" fill="#2d7a5f" opacity="0.15" transform="rotate(15 345 255)"/>
+  <circle cx="60" cy="250" r="10" fill="#1a5c47" opacity="0.2"/>
+
+  <!-- Add task button -->
+  <g transform="translate(40, 250)">
+    <rect width="320" height="20" rx="6" fill="none" stroke="#3d9970" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="160" y="15" font-family="system-ui, sans-serif" font-size="12" fill="#a8c9bc" text-anchor="middle">+ Add new task</text>
+  </g>
+</svg>

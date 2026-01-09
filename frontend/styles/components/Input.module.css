@@ -1,0 +1,106 @@
+/**
+ * Input CSS Module - Advanced To-Do Application UI
+ * Feature: 003-advanced-todo-ui
+ *
+ * Dark green theme input styles with error and focus states.
+ */
+
+/* Container for label, input, and error message */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+/* Label styling */
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.25rem;
+}
+
+.required {
+  color: var(--color-error);
+  margin-left: var(--space-xs);
+}
+
+/* Input field styling */
+.input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  transition: all var(--duration-normal) var(--ease-in-out);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* Focus state - green accent */
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(61, 153, 112, 0.15);
+}
+
+/* Hover state */
+.input:hover:not(:focus):not(:disabled) {
+  border-color: var(--color-primary-light);
+}
+
+/* Error state - red border */
+.input.error {
+  border-color: var(--color-error);
+}
+
+.input.error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+}
+
+/* Error message styling */
+.errorMessage {
+  font-size: 0.875rem;
+  color: var(--color-error);
+  line-height: 1.25rem;
+  margin-top: calc(var(--space-xs) * -0.5);
+}
+
+/* Disabled state */
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-primary-dark);
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+  .input {
+    padding: var(--space-sm);
+    font-size: 0.875rem;
+  }
+
+  .label {
+    font-size: 0.8125rem;
+  }
+
+  .errorMessage {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .input {
+    transition: none;
+  }
+}

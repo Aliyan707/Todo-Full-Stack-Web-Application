@@ -1,0 +1,153 @@
+/**
+ * AnimatedBackground CSS Module - Advanced To-Do Application UI
+ * Feature: 003-advanced-todo-ui
+ *
+ * Layered floating shapes animation with dark green theme.
+ */
+
+/* Background container - positioned behind all content */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  background: linear-gradient(
+    135deg,
+    var(--color-background) 0%,
+    var(--color-primary-dark) 50%,
+    var(--color-background) 100%
+  );
+}
+
+/* Base shape styling */
+.shape {
+  position: absolute;
+  opacity: 0.15;
+  will-change: transform, opacity;
+  animation: floatShape 20s ease-in-out infinite;
+}
+
+/* Circle shape */
+.circle {
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--color-accent),
+    var(--color-primary-light)
+  );
+}
+
+/* Triangle shape using clip-path */
+.triangle {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light),
+    var(--color-accent)
+  );
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Square shape with slight rotation */
+.square {
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-primary-light)
+  );
+  border-radius: 8px;
+  transform: rotate(45deg);
+}
+
+/* Floating animation - gentle movement */
+@keyframes floatShape {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0.15;
+  }
+  25% {
+    transform: translate(20px, -30px) rotate(90deg) scale(1.1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-15px, -60px) rotate(180deg) scale(0.9);
+    opacity: 0.15;
+  }
+  75% {
+    transform: translate(-30px, -30px) rotate(270deg) scale(1.05);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg) scale(1);
+    opacity: 0.15;
+  }
+}
+
+/* Additional drift animation for variety (applied via nth-child) */
+.shape:nth-child(odd) {
+  animation-name: driftParticle;
+}
+
+@keyframes driftParticle {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.12;
+  }
+  33% {
+    transform: translate(-40px, 40px) rotate(120deg);
+    opacity: 0.18;
+  }
+  66% {
+    transform: translate(40px, -20px) rotate(240deg);
+    opacity: 0.15;
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+    opacity: 0.12;
+  }
+}
+
+/* Stagger animation delays for natural look */
+.shape:nth-child(3n) {
+  animation-duration: 25s;
+}
+
+.shape:nth-child(4n) {
+  animation-duration: 30s;
+}
+
+.shape:nth-child(5n) {
+  animation-duration: 22s;
+}
+
+/* Additional opacity variation */
+.shape:nth-child(2n) {
+  opacity: 0.1;
+}
+
+.shape:nth-child(3n) {
+  opacity: 0.18;
+}
+
+/* Accessibility: Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .shape {
+    animation: none;
+    opacity: 0.08;
+  }
+}
+
+/* Performance optimization: reduce animation on mobile */
+@media (max-width: 768px) {
+  /* Reduce number of visible shapes on mobile for better performance */
+  .shape:nth-child(n+11) {
+    display: none;
+  }
+
+  /* Simplify animations on mobile */
+  .shape {
+    animation-duration: 30s !important;
+  }
+}

@@ -1,0 +1,47 @@
+/**
+ * TodoImagery CSS Module - Advanced To-Do Application UI
+ * Feature: 003-advanced-todo-ui
+ *
+ * Responsive styling for To-Do app illustration.
+ */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  width: 100%;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  opacity: 0.9;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.image:hover {
+  opacity: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-lg);
+  }
+
+  .image {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 375px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .image {
+    max-width: 280px;
+  }
+}

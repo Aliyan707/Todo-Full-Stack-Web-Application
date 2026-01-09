@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(timeout 10 npm run dev:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(if [ -f \".specify/scripts/bash/check-prerequisites.sh\" ])",
+      "Bash(then bash .specify/scripts/bash/check-prerequisites.sh --json)",
+      "Bash(else echo '{\"\"error\"\": \"\"Prerequisites script not found\"\"}')",
+      "Bash(fi)"
+    ]
+  }
+}

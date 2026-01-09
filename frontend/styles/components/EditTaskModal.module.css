@@ -1,0 +1,109 @@
+/**
+ * EditTaskModal CSS Module - Advanced To-Do Application UI
+ * Feature: 003-advanced-todo-ui
+ *
+ * Modal form styling for editing tasks.
+ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* Textarea styling */
+.textareaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.textareaLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.25rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: all var(--duration-normal) var(--ease-in-out);
+}
+
+.textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(61, 153, 112, 0.15);
+}
+
+.textarea:hover:not(:focus):not(:disabled) {
+  border-color: var(--color-primary-light);
+}
+
+.textareaError {
+  border-color: var(--color-error);
+}
+
+.textareaError:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+}
+
+.textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-primary-dark);
+}
+
+.errorMessage {
+  font-size: 0.875rem;
+  color: var(--color-error);
+  line-height: 1.25rem;
+}
+
+.charCount {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+/* Modal actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .textarea {
+    transition: none;
+  }
+}

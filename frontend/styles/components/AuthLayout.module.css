@@ -1,0 +1,77 @@
+/**
+ * AuthLayout CSS Module - Advanced To-Do Application UI
+ * Feature: 003-advanced-todo-ui
+ *
+ * Split-screen CSS Grid layout for authentication.
+ */
+
+.layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: linear-gradient(
+    135deg,
+    var(--color-background) 0%,
+    var(--color-primary-dark) 50%,
+    var(--color-background) 100%
+  );
+}
+
+/* Left panel - Sign In */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  background: rgba(26, 46, 38, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(61, 153, 112, 0.2);
+}
+
+/* Right panel - Sign Up */
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  background: rgba(26, 46, 38, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Tablet breakpoint - maintain side-by-side */
+@media (max-width: 1024px) {
+  .leftPanel,
+  .rightPanel {
+    padding: var(--space-xl);
+  }
+}
+
+/* Mobile breakpoint - stack vertically */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .leftPanel {
+    border-right: none;
+    border-bottom: 1px solid rgba(61, 153, 112, 0.2);
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .rightPanel {
+    padding: var(--space-xl) var(--space-lg);
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 375px) {
+  .leftPanel,
+  .rightPanel {
+    padding: var(--space-lg) var(--space-md);
+  }
+}
