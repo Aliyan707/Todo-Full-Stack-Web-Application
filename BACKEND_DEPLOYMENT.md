@@ -10,7 +10,33 @@ This guide explains how to deploy your FastAPI backend to production.
 
 ---
 
-## Option 1: Deploy to Render (Recommended - Free Tier Available)
+## 🐳 Docker Deployment (Recommended)
+
+**Your backend is now containerized!** For detailed Docker instructions, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)
+
+### Quick Docker Start
+```bash
+# Local development
+docker-compose up -d
+
+# Or build and run manually
+cd backend
+docker build -t todo-backend .
+docker run -p 8000:8000 --env-file .env todo-backend
+```
+
+**Deploy with Docker to:**
+- Render (Docker runtime)
+- Railway
+- Fly.io
+- AWS ECS
+- Google Cloud Run
+
+See [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md) for complete instructions.
+
+---
+
+## Option 1: Deploy to Render (Free Tier Available)
 
 ### Step 1: Create Render Account
 1. Go to https://render.com

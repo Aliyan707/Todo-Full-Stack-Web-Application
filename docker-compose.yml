@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Use Neon database (production)
+      - DATABASE_URL=${DATABASE_URL:-postgresql://neondb_owner:npg_KuFw58pkIMDG@ep-fancy-bird-ahkak717-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-your-secret-key-minimum-32-characters-required}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    networks:
+      - todo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Local PostgreSQL Database (for local development)
+  # Uncomment this if you want to use a local database instead of Neon
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: todo-postgres
+  #   environment:
+  #     - POSTGRES_USER=todouser
+  #     - POSTGRES_PASSWORD=todopass
+  #     - POSTGRES_DB=tododb
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - todo-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U todouser"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+networks:
+  todo-network:
+    driver: bridge
+
+# Uncomment this if using local PostgreSQL
+# volumes:
+#   postgres_data:
