@@ -62,7 +62,7 @@ DATABASE_URL=postgresql://neondb_owner:npg_KuFw58pkIMDG@ep-fancy-bird-ahkak717-p
 
 BETTER_AUTH_SECRET=your-secret-key-minimum-32-characters-required
 
-ALLOWED_ORIGINS=https://your-frontend-url.vercel.app,http://localhost:3000
+ALLOWED_ORIGINS=https://your-frontend-url.vercel.app,http://localhost:  3000
 
 ENVIRONMENT=production
 

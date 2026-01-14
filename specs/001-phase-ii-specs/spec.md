@@ -5,6 +5,16 @@
 **Status**: Draft
 **Input**: User description: "Generate high-fidelity technical specifications for Phase II. 1. Database Spec: Update @specs/database/schema.md for PostgreSQL with User-Task relationships (1:N). 2. API Spec: Define @specs/api/rest-endpoints.md ensuring standard REST verbs and JWT protection. 3. Auth Spec: Detail the handshake between Better-Auth (TS) and FastAPI (Py) in @specs/skills/auth-bridge.md. 4. UI Spec: Define components for Task CRUD and Auth in @specs/ui/components.md."
 
+## Clarifications
+
+### Session 2026-01-13
+
+- Q: What is the target response time for API endpoints under normal load? → A: Keep p95 < 200ms (balanced, current spec value, industry standard)
+- Q: Which password hashing algorithm should be used for storing user passwords? → A: bcrypt (industry standard, proven security, wide support)
+- Q: What is the maximum number of tasks a single user should be able to create? → A: No enforced limit (simplest implementation, add limits if needed later)
+- Q: What are the minimum password strength requirements for user registration? → A: Minimum 8 characters, uppercase, lowercase, number (balanced security, industry standard)
+- Q: Should the GET /api/tasks endpoint support pagination for users with many tasks? → A: Yes, paginate with limit=50 default (prevents performance issues, scalable from start)
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Database Schema Foundation (Priority: P1)
@@ -96,7 +106,7 @@ As a frontend developer, I need clear component specifications that define the s
 
 **Database Schema (specs/database/schema.md)**:
 
-- **FR-001**: Database schema MUST define a users table with fields for id (UUID primary key), email (unique, not null), password_hash (not null), created_at (timestamp), updated_at (timestamp)
+- **FR-001**: Database schema MUST define a users table with fields for id (UUID primary key), email (unique, not null), password_hash (bcrypt hashed, not null), created_at (timestamp), updated_at (timestamp)
 - **FR-002**: Database schema MUST define a tasks table with fields for id (UUID primary key), title (string, not null, max 200 chars), description (text, nullable), completed (boolean, default false), user_id (UUID foreign key to users.id, not null), created_at (timestamp), updated_at (timestamp)
 - **FR-003**: Database schema MUST establish a 1:N relationship between users and tasks via foreign key constraint (tasks.user_id references users.id) with ON DELETE CASCADE
 - **FR-004**: Database schema MUST define indexes on frequently queried columns: tasks(user_id), tasks(created_at), tasks(completed), users(email)
@@ -105,8 +115,8 @@ As a frontend developer, I need clear component specifications that define the s
 
 **REST API Endpoints (specs/api/rest-endpoints.md)**:
 
-- **FR-007**: API spec MUST define authentication endpoints: POST /api/auth/register, POST /api/auth/login, POST /api/auth/logout, GET /api/auth/me (with request/response schemas)
-- **FR-008**: API spec MUST define task CRUD endpoints: GET /api/tasks (list all user's tasks), POST /api/tasks (create task), GET /api/tasks/:id (get single task), PUT /api/tasks/:id (update task), DELETE /api/tasks/:id (delete task)
+- **FR-007**: API spec MUST define authentication endpoints: POST /api/auth/register (validate password: minimum 8 characters with at least one uppercase, lowercase, and number; bcrypt hash before storage), POST /api/auth/login (bcrypt verify against stored hash), POST /api/auth/logout, GET /api/auth/me (with request/response schemas)
+- **FR-008**: API spec MUST define task CRUD endpoints: GET /api/tasks (list user's tasks with pagination: default limit=50, accepts limit and offset query parameters, returns total count), POST /api/tasks (create task), GET /api/tasks/:id (get single task), PUT /api/tasks/:id (update task), DELETE /api/tasks/:id (delete task)
 - **FR-009**: API spec MUST specify request schemas with field names, types, required/optional flags, and validation rules for each endpoint
 - **FR-010**: API spec MUST specify response schemas with field names, types, and example payloads for success (200, 201, 400, 401, 403, 404, 422, 500) and error cases
 - **FR-011**: API spec MUST indicate which endpoints require JWT authentication (all /api/tasks/* endpoints require Bearer token in Authorization header)
@@ -125,13 +135,24 @@ As a frontend developer, I need clear component specifications that define the s
 
 **UI Component Specifications (specs/ui/components.md)**:
 
-- **FR-021**: UI spec MUST define authentication components: LoginForm (email/password inputs, submit button, error display), SignupForm (email/password/confirmPassword inputs, validation, submit button), AuthGuard (wrapper component for protected routes)
-- **FR-022**: UI spec MUST define task management components: TaskList (displays all user's tasks with filtering/sorting), TaskItem (single task display with edit/delete actions), TaskForm (create/edit form with title/description inputs), TaskDeleteConfirm (confirmation modal)
+- **FR-021**: UI spec MUST define authentication components: LoginForm (email/password inputs, submit button, error display), SignupForm (email/password/confirmPassword inputs, client-side validation for password strength: minimum 8 characters with at least one uppercase, lowercase, and number, submit button), AuthGuard (wrapper component for protected routes)
+- **FR-022**: UI spec MUST define task management components: TaskList (displays user's tasks with pagination controls: previous/next buttons, page indicator, handles offset-based pagination with 50 items per page), TaskItem (single task display with edit/delete actions), TaskForm (create/edit form with title/description inputs), TaskDeleteConfirm (confirmation modal)
 - **FR-023**: UI spec MUST specify component props and state: each component lists prop types (TypeScript interfaces), required/optional flags, default values, and internal state variables
 - **FR-024**: UI spec MUST define component interactions: click handlers, form submissions, API calls (which endpoint, request payload, response handling), loading/error/success states
 - **FR-025**: UI spec MUST specify accessibility requirements: semantic HTML elements (button, form, input), ARIA labels for screen readers, keyboard navigation support (tab order, enter/escape keys), focus management
 - **FR-026**: UI spec MUST define styling approach: Tailwind CSS utility classes, responsive breakpoints (mobile-first), dark mode support (if applicable), consistent spacing/typography using design tokens
 - **FR-027**: UI spec MUST specify component architecture: Server Components by default (TaskList, TaskItem display), Client Components only when needed ('use client' for TaskForm, LoginForm with event handlers), component composition patterns
+
+### Non-Functional Requirements
+
+**Performance**:
+
+- **NFR-001**: All API endpoints MUST respond within 200ms at the 95th percentile (p95) under normal load conditions
+
+**Security**:
+
+- **NFR-002**: User passwords MUST be hashed using bcrypt algorithm with a cost factor of at least 12 (provides strong security while maintaining reasonable authentication performance)
+- **NFR-003**: User passwords MUST meet minimum strength requirements: at least 8 characters with at least one uppercase letter, one lowercase letter, and one number (validated on both frontend and backend)
 
 ### Key Entities
 
@@ -182,6 +203,8 @@ As a frontend developer, I need clear component specifications that define the s
 - All API endpoints return JSON (standard for modern REST APIs)
 - Task title has 200 character limit (reasonable for user-visible task names)
 - Task description is unlimited length (allows detailed task notes)
+- No limit on number of tasks per user (simplifies MVP implementation, can add limits later if abuse patterns emerge)
+- Task list endpoint uses pagination with default limit of 50 items (prevents performance issues as users accumulate tasks)
 - ON DELETE CASCADE for tasks when user is deleted (task ownership is strict)
 - Timestamps use UTC timezone (avoids timezone conversion issues)
 - Connection pooling is configured for Neon (serverless best practice)

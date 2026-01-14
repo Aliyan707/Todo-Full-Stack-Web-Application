@@ -1,18 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import ClientErrorBoundary from "@/components/shared/ClientErrorBoundary";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1a5c47", // Dark green primary color
+};
 
 export const metadata: Metadata = {
   title: "Advanced To-Do App | Organize Your Life with Style",
   description: "A modern, visually unique To-Do application with dynamic animations and a dark green theme. Built with Next.js 15.",
   keywords: ["todo", "task management", "productivity", "dark green theme", "animated UI"],
   authors: [{ name: "Advanced To-Do Team" }],
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: "#1a5c47", // Dark green primary color
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/favicon.svg",
   },
   openGraph: {
     type: "website",
@@ -45,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <ClientErrorBoundary>
           <AuthProvider>

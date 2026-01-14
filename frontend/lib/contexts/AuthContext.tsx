@@ -145,6 +145,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signOut,
   };
 
+  // Don't render children until initial auth check completes to prevent blink
+  if (isLoading) {
+    return null;
+  }
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

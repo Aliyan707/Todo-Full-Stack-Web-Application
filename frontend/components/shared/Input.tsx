@@ -22,6 +22,7 @@ export default function Input({
   className = '',
   required = false,
   value,
+  defaultValue,
   ...props
 }: InputProps) {
   const generatedId = useId();
@@ -35,6 +36,9 @@ export default function Input({
     .filter(Boolean)
     .join(' ');
 
+  // Determine if this is a controlled input (value is explicitly provided)
+  const isControlled = value !== undefined;
+
   return (
     <div className={styles.container}>
       {label && (
@@ -44,14 +48,14 @@ export default function Input({
         </label>
       )}
       <input
+        {...props}
         id={inputId}
         type={type}
         className={inputClassNames}
         required={required}
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? `${inputId}-error` : undefined}
-        value={value ?? ''}
-        {...props}
+        {...(isControlled ? { value: value ?? '' } : { defaultValue })}
       />
       {error && (
         <span id={`${inputId}-error`} className={styles.errorMessage} role="alert">
