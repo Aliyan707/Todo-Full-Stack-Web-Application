@@ -1,13 +1,12 @@
 /**
  * API Client Module
  * Centralized fetch wrapper with JWT authentication and error handling
+ * Supports Hugging Face Space deployment with automatic retry
  */
 
 import { getAuthToken } from './auth';
 import type { ApiError } from './types';
-
-// API base URL from environment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { apiConfig, getApiUrl } from './config/api';
 
 /**
  * Custom error class for API errors
@@ -24,6 +23,20 @@ export class ApiClientError extends Error {
 }
 
 /**
+ * Sleep utility for retry delays
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Check if error is retryable
+ */
+function isRetryableStatus(status: number): boolean {
+  return status === 502 || status === 503 || status === 504;
+}
+
+/**
  * Generic API client with automatic JWT authentication
  *
  * @param endpoint - API endpoint path (e.g., '/api/tasks')
@@ -35,75 +48,121 @@ export async function apiClient<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  try {
-    // Get JWT token for authentication
-    const token = await getAuthToken();
+  const url = getApiUrl(endpoint);
+  let lastError: Error | undefined;
+  let lastStatus = 0;
 
-    // Build headers with authentication
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+  for (let attempt = 0; attempt < apiConfig.retryAttempts; attempt++) {
+    try {
+      // Get JWT token for authentication
+      const token = await getAuthToken();
 
-    // Add Authorization header if token exists
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+      // Build headers with authentication
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
 
-    // Merge with custom headers from options
-    const customHeaders = options?.headers;
-    if (customHeaders) {
-      if (customHeaders instanceof Headers) {
-        customHeaders.forEach((value, key) => {
-          headers[key] = value;
-        });
-      } else if (Array.isArray(customHeaders)) {
-        customHeaders.forEach(([key, value]) => {
-          headers[key] = value;
-        });
-      } else {
-        Object.assign(headers, customHeaders);
+      // Add Authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
-    }
 
-    // Make the API request
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+      // Merge with custom headers from options
+      const customHeaders = options?.headers;
+      if (customHeaders) {
+        if (customHeaders instanceof Headers) {
+          customHeaders.forEach((value, key) => {
+            headers[key] = value;
+          });
+        } else if (Array.isArray(customHeaders)) {
+          customHeaders.forEach(([key, value]) => {
+            headers[key] = value;
+          });
+        } else {
+          Object.assign(headers, customHeaders);
+        }
+      }
 
-    // Handle different error status codes
-    if (!response.ok) {
-      await handleApiError(response);
-    }
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), apiConfig.timeout);
 
-    // Handle 204 No Content (DELETE operations)
-    if (response.status === 204) {
-      return {} as T;
-    }
+      // Make the API request
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
 
-    // Parse and return JSON response
-    const data = await response.json();
-    return data as T;
-  } catch (error) {
-    // Re-throw ApiClientError as-is
-    if (error instanceof ApiClientError) {
-      throw error;
-    }
+      clearTimeout(timeoutId);
+      lastStatus = response.status;
 
-    // Handle network errors
-    if (error instanceof TypeError) {
+      // Check if we should retry
+      if (!response.ok && isRetryableStatus(response.status) && attempt < apiConfig.retryAttempts - 1) {
+        const delay = apiConfig.retryDelay * Math.pow(2, attempt);
+        console.log(`[API] Retrying request (attempt ${attempt + 2}/${apiConfig.retryAttempts}) in ${delay}ms...`);
+        await sleep(delay);
+        continue;
+      }
+
+      // Handle different error status codes
+      if (!response.ok) {
+        await handleApiError(response);
+      }
+
+      // Handle 204 No Content (DELETE operations)
+      if (response.status === 204) {
+        return {} as T;
+      }
+
+      // Parse and return JSON response
+      const data = await response.json();
+      return data as T;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      // Re-throw ApiClientError as-is (don't retry)
+      if (error instanceof ApiClientError) {
+        throw error;
+      }
+
+      // Check if we should retry network errors
+      if (attempt < apiConfig.retryAttempts - 1) {
+        const delay = apiConfig.retryDelay * Math.pow(2, attempt);
+        console.log(`[API] Network error, retrying (attempt ${attempt + 2}/${apiConfig.retryAttempts}) in ${delay}ms...`);
+        await sleep(delay);
+        continue;
+      }
+
+      // Handle abort (timeout)
+      if (lastError.name === 'AbortError') {
+        throw new ApiClientError(
+          'Request timed out. The server may be waking up - please try again.',
+          408
+        );
+      }
+
+      // Handle network errors
+      if (lastError instanceof TypeError) {
+        const message = apiConfig.huggingFaceSpace
+          ? 'Cannot connect to API. The Hugging Face Space may be sleeping or starting up. Please wait a moment and try again.'
+          : 'Connection failed. Please check your network connection.';
+        throw new ApiClientError(message, 0);
+      }
+
+      // Handle unexpected errors
       throw new ApiClientError(
-        'Connection failed. Please check your network connection.',
-        0
+        'An unexpected error occurred. Please try again.',
+        500
       );
     }
-
-    // Handle unexpected errors
-    throw new ApiClientError(
-      'An unexpected error occurred. Please try again.',
-      500
-    );
   }
+
+  // All retries exhausted
+  throw new ApiClientError(
+    'Unable to reach the API after multiple attempts. The server may be sleeping.',
+    lastStatus || 503
+  );
 }
 
 /**
@@ -142,7 +201,7 @@ async function handleApiError(response: Response): Promise<never> {
       // Unauthorized - redirect to login
       if (typeof window !== 'undefined') {
         const returnUrl = encodeURIComponent(window.location.pathname);
-        window.location.href = `/login?returnUrl=${returnUrl}`;
+        window.location.href = `/auth?returnUrl=${returnUrl}`;
       }
       throw new ApiClientError('Session expired. Please log in again.', status, errorData);
 
@@ -160,7 +219,13 @@ async function handleApiError(response: Response): Promise<never> {
       throw new ApiClientError('Server error. Please try again later.', status, errorData);
 
     case 503:
-      throw new ApiClientError('Service temporarily unavailable. Please try again later.', status, errorData);
+      throw new ApiClientError(
+        apiConfig.huggingFaceSpace
+          ? 'The Hugging Face Space is starting up. Please wait a moment and try again.'
+          : 'Service temporarily unavailable. Please try again later.',
+        status,
+        errorData
+      );
 
     default:
       throw new ApiClientError(errorMessage, status, errorData);
@@ -200,3 +265,8 @@ export async function apiPut<T>(endpoint: string, data?: unknown): Promise<T> {
 export async function apiDelete<T>(endpoint: string): Promise<T> {
   return apiClient<T>(endpoint, { method: 'DELETE' });
 }
+
+/**
+ * Export API configuration for use in components
+ */
+export { apiConfig } from './config/api';

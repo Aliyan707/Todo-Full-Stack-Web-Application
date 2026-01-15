@@ -52,7 +52,7 @@ export interface APIResponse<T> {
  * API request options
  */
 export interface APIRequestOptions {
-  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
   body?: unknown;
   token?: string;              // JWT token for authenticated requests
