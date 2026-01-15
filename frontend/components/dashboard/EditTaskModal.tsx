@@ -7,7 +7,7 @@
  * Modal for editing existing tasks.
  */
 
-import React, { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import Modal from '@/components/shared/Modal';
 import Input from '@/components/shared/Input';
 import Button from '@/components/shared/Button';

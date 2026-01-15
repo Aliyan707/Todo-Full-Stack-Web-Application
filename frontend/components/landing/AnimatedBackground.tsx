@@ -7,7 +7,7 @@
  * Dynamic animated background with layered floating shapes in dark green theme.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '@/styles/components/AnimatedBackground.module.css';
 
 interface Shape {

@@ -7,7 +7,7 @@
  * Provides authentication state and methods across the application.
  */
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserCredentials, UserRegistration, AuthResponse } from '@/types/user';
 
 export interface AuthContextType {

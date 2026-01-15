@@ -7,7 +7,7 @@
  * Navigation bar for landing page with logo and auth buttons.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import styles from '@/styles/components/LandingNav.module.css';

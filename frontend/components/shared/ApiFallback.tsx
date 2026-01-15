@@ -8,13 +8,13 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import { useState, useEffect, type CSSProperties, type ReactNode } from 'react';
 import { ApiStatus } from '@/lib/config/api';
 import { useApiHealth } from '@/lib/hooks/useApiHealth';
 
 interface ApiFallbackProps {
   /** Content to show when API is available */
-  children: React.ReactNode;
+  children: ReactNode;
   /** Custom loading message */
   loadingMessage?: string;
   /** Whether to automatically wait for API */
@@ -44,11 +44,11 @@ export default function ApiFallback({
   const [waitAttempt, setWaitAttempt] = useState(0);
 
   // Auto-wait when component mounts and API is not available
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoWait && !isAvailable && !isWaiting && status !== ApiStatus.Unknown) {
       handleWaitForApi();
     }
-  }, [status]);
+  }, [status, autoWait, isAvailable, isWaiting]);
 
   const handleWaitForApi = async () => {
     setIsWaiting(true);
@@ -70,7 +70,7 @@ export default function ApiFallback({
   }
 
   // Container styles
-  const containerStyle: React.CSSProperties = {
+  const containerStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -83,26 +83,26 @@ export default function ApiFallback({
     margin: '20px',
   };
 
-  const iconStyle: React.CSSProperties = {
+  const iconStyle: CSSProperties = {
     fontSize: '48px',
     marginBottom: '20px',
   };
 
-  const titleStyle: React.CSSProperties = {
+  const titleStyle: CSSProperties = {
     fontSize: '24px',
     fontWeight: 600,
     color: 'var(--color-text, #ffffff)',
     marginBottom: '12px',
   };
 
-  const messageStyle: React.CSSProperties = {
+  const messageStyle: CSSProperties = {
     fontSize: '16px',
     color: 'var(--color-text-secondary, #aaaaaa)',
     marginBottom: '24px',
     maxWidth: '400px',
   };
 
-  const spinnerStyle: React.CSSProperties = {
+  const spinnerStyle: CSSProperties = {
     width: '40px',
     height: '40px',
     border: '3px solid var(--color-primary-light, #2d6a4f)',
@@ -112,7 +112,7 @@ export default function ApiFallback({
     marginBottom: '20px',
   };
 
-  const buttonStyle: React.CSSProperties = {
+  const buttonStyle: CSSProperties = {
     padding: '12px 24px',
     backgroundColor: 'var(--color-primary, #1a4d2e)',
     color: 'white',
@@ -124,14 +124,14 @@ export default function ApiFallback({
     transition: 'background-color 0.2s',
   };
 
-  const secondaryButtonStyle: React.CSSProperties = {
+  const secondaryButtonStyle: CSSProperties = {
     ...buttonStyle,
     backgroundColor: 'transparent',
     border: '1px solid var(--color-primary, #1a4d2e)',
     marginLeft: '12px',
   };
 
-  const progressStyle: React.CSSProperties = {
+  const progressStyle: CSSProperties = {
     width: '200px',
     height: '4px',
     backgroundColor: 'var(--color-surface-light, rgba(255, 255, 255, 0.1))',
@@ -140,7 +140,7 @@ export default function ApiFallback({
     marginBottom: '16px',
   };
 
-  const progressBarStyle: React.CSSProperties = {
+  const progressBarStyle: CSSProperties = {
     height: '100%',
     backgroundColor: 'var(--color-primary, #1a4d2e)',
     animation: 'progress 2s ease-in-out infinite',
@@ -186,7 +186,7 @@ export default function ApiFallback({
   return (
     <div style={containerStyle} role="alert">
       <div style={iconStyle} aria-hidden="true">
-        {status === ApiStatus.Error ? '!' : '!'}
+        !
       </div>
       <h2 style={titleStyle}>
         {status === ApiStatus.Error ? 'Connection Error' : 'Server Unavailable'}

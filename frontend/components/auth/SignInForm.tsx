@@ -7,7 +7,7 @@
  * Sign-in form with email/password validation and Better Auth integration.
  */
 
-import React, { useState, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/components/shared/Input';
 import Button from '@/components/shared/Button';

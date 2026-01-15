@@ -7,7 +7,7 @@
  * Individual task card with checkbox, title, description, and action buttons.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Task } from '@/types/task';
 import styles from '@/styles/components/TaskItem.module.css';
 

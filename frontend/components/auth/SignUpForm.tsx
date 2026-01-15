@@ -7,7 +7,7 @@
  * Sign-up form with validation and password strength indicator.
  */
 
-import React, { useState, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/components/shared/Input';
 import Button from '@/components/shared/Button';

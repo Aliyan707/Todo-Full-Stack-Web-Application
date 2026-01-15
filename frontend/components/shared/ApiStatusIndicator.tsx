@@ -8,7 +8,7 @@
 
 'use client';
 
-import React from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { ApiStatus } from '@/lib/config/api';
 import { useApiHealth } from '@/lib/hooks/useApiHealth';
 
@@ -48,7 +48,6 @@ export default function ApiStatusIndicator({
     status,
     message,
     responseTime,
-    lastChecked,
     isChecking,
     isAvailable,
     isWakingUp,
@@ -60,7 +59,7 @@ export default function ApiStatusIndicator({
   });
 
   // Notify when API becomes available
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAvailable && onAvailable) {
       onAvailable();
     }
@@ -74,7 +73,7 @@ export default function ApiStatusIndicator({
     }
   };
 
-  const containerStyle: React.CSSProperties = {
+  const containerStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -84,7 +83,7 @@ export default function ApiStatusIndicator({
     fontSize: showDetails ? '14px' : '12px',
   };
 
-  const dotStyle: React.CSSProperties = {
+  const dotStyle: CSSProperties = {
     width: '10px',
     height: '10px',
     borderRadius: '50%',
@@ -92,18 +91,12 @@ export default function ApiStatusIndicator({
     animation: isChecking || isWakingUp ? 'pulse 1.5s ease-in-out infinite' : 'none',
   };
 
-  const labelStyle: React.CSSProperties = {
+  const labelStyle: CSSProperties = {
     color: STATUS_COLORS[status],
     fontWeight: 500,
   };
 
-  const messageStyle: React.CSSProperties = {
-    color: 'var(--color-text-secondary, #aaa)',
-    fontSize: '12px',
-    marginTop: '4px',
-  };
-
-  const buttonStyle: React.CSSProperties = {
+  const buttonStyle: CSSProperties = {
     padding: '4px 8px',
     backgroundColor: 'var(--color-primary, #1a4d2e)',
     color: 'white',
@@ -162,7 +155,7 @@ export function ApiStatusDot({ className = '' }: { className?: string }) {
     checkInterval: 60000,
   });
 
-  const dotStyle: React.CSSProperties = {
+  const dotStyle: CSSProperties = {
     width: '8px',
     height: '8px',
     borderRadius: '50%',

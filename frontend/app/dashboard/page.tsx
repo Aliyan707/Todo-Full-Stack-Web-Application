@@ -7,7 +7,7 @@
  * Main dashboard for task management with CRUD operations.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useTasks } from '@/lib/hooks/useTasks';

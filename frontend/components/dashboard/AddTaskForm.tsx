@@ -7,7 +7,7 @@
  * Form for creating new tasks with title and description.
  */
 
-import React, { useState, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import Input from '@/components/shared/Input';
 import Button from '@/components/shared/Button';
 import styles from '@/styles/components/AddTaskForm.module.css';
