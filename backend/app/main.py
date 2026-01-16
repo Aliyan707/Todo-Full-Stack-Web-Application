@@ -150,10 +150,15 @@ def register(req: RegisterRequest, session: Session = Depends(get_session)):
 
 @auth_router.post("/login", response_model=AuthResponse)
 def login(req: LoginRequest, session: Session = Depends(get_session)):
-    user = session.exec(select(User).where(User.email == req.email)).first()
-    if not user or not verify_password(req.password, user.password_hash):
-        raise HTTPException(401, "Invalid credentials")
-    return AuthResponse(access_token=create_access_token(user.id), user=UserResponse.model_validate(user))
+    try:
+        user = session.exec(select(User).where(User.email == req.email)).first()
+        if not user or not verify_password(req.password, user.password_hash):
+            raise HTTPException(401, "Invalid credentials")
+        return AuthResponse(access_token=create_access_token(user.id), user=UserResponse.model_validate(user))
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Login error: {str(e)}")
 
 @auth_router.get("/me", response_model=UserResponse)
 def get_me(user_id: UUID = Depends(get_current_user), session: Session = Depends(get_session)):
@@ -233,7 +238,13 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "healthy"}
+    try:
+        with Session(engine) as session:
+            session.exec(select(1)).first()
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)[:100]}"
+    return {"status": "healthy", "database": db_status}
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,7 +6,7 @@
  * Matches contracts/tasks.yaml endpoints.
  */
 
-import { apiGet, apiPost, apiPatch, apiPut, apiDelete } from './client';
+import { apiGet, apiPost, apiPut, apiDelete } from './client';
 import {
   Task,
   TaskCreate,

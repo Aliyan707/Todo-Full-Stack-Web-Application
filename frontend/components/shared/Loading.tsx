@@ -5,7 +5,6 @@
  * Loading spinner with dark green theme and accessibility.
  */
 
-import React from 'react';
 import styles from '@/styles/components/Loading.module.css';
 
 interface LoadingProps {

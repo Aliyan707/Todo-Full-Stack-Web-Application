@@ -5,10 +5,12 @@
  * Feature: 003-advanced-todo-ui
  *
  * Provides authentication state and methods across the application.
+ * Uses centralized API configuration for Hugging Face Space integration.
  */
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserCredentials, UserRegistration, AuthResponse } from '@/types/user';
+import { getApiUrl } from '@/lib/config/api';
 
 export interface AuthContextType {
   user: User | null;
@@ -67,9 +69,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (credentials: UserCredentials): Promise<void> => {
     setIsLoading(true);
     try {
-      // API call will be made through the API client (to be created in T024)
-      // For now, this is a placeholder structure
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+      // Use centralized API config for proper HuggingFace Space URL handling
+      const response = await fetch(getApiUrl('/api/auth/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,15 +79,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Sign in failed');
+        let errorMessage = 'Sign in failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch {
+          // Response is not JSON (e.g., "Internal Server Error")
+          errorMessage = `Server error (${response.status}): Please try again later`;
+        }
+        throw new Error(errorMessage);
       }
 
       const authResponse: AuthResponse = await response.json();
 
       // Store token and user data
       const token = authResponse.access_token || authResponse.token;
-      localStorage.setItem(TOKEN_KEY, token);
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
       localStorage.setItem(USER_KEY, JSON.stringify(authResponse.user));
       setUser(authResponse.user);
     } catch (error) {
@@ -100,25 +110,60 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (registration: UserRegistration): Promise<void> => {
     setIsLoading(true);
     try {
-      // API call will be made through the API client (to be created in T024)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
+      // Step 1: Register the user (using centralized API config)
+      const registerResponse = await fetch(getApiUrl('/api/auth/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(registration),
+        body: JSON.stringify({
+          email: registration.email,
+          password: registration.password,
+        }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Sign up failed');
+      if (!registerResponse.ok) {
+        let errorMessage = 'Sign up failed';
+        try {
+          const errorData = await registerResponse.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch {
+          // Response is not JSON (e.g., "Internal Server Error")
+          errorMessage = `Server error (${registerResponse.status}): Please try again later`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const authResponse: AuthResponse = await response.json();
+      // Step 2: Auto-login after successful registration
+      const loginResponse = await fetch(getApiUrl('/api/auth/login'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: registration.email,
+          password: registration.password,
+        }),
+      });
+
+      if (!loginResponse.ok) {
+        let errorMessage = 'Auto-login failed after registration';
+        try {
+          const errorData = await loginResponse.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Server error (${loginResponse.status}): Please try again later`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const authResponse: AuthResponse = await loginResponse.json();
 
       // Store token and user data
       const token = authResponse.access_token || authResponse.token;
-      localStorage.setItem(TOKEN_KEY, token);
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
       localStorage.setItem(USER_KEY, JSON.stringify(authResponse.user));
       setUser(authResponse.user);
     } catch (error) {

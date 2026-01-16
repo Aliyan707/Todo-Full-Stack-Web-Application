@@ -7,13 +7,13 @@
  * Reusable button component with dark green theme variants.
  */
 
-import React from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import styles from '@/styles/components/Button.module.css';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function Button({

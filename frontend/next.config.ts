@@ -5,18 +5,29 @@ import type { NextConfig } from "next";
  * Configured for Hugging Face Space deployment
  */
 
-// Hugging Face Space URL derivation
-function getHuggingFaceApiUrl(): string {
+/**
+ * Resolve API URL with proper precedence:
+ * 1. NEXT_PUBLIC_API_URL (explicit, highest priority)
+ * 2. Derived from HF Space owner/name
+ * 3. Localhost fallback for development
+ */
+function getApiUrl(): string {
+  // Priority 1: Explicit API URL (recommended for Vercel)
+  const explicitUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (explicitUrl && explicitUrl !== 'http://localhost:8000') {
+    return explicitUrl.replace(/\/$/, ''); // Remove trailing slash
+  }
+
+  // Priority 2: Derive from HuggingFace Space config
   const owner = process.env.NEXT_PUBLIC_HF_SPACE_OWNER;
   const name = process.env.NEXT_PUBLIC_HF_SPACE_NAME;
-
   if (owner && name) {
     const normalizedName = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
     return `https://${owner}-${normalizedName}.hf.space`;
   }
 
-  // Fallback to explicit URL or localhost
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  // Priority 3: Localhost fallback for development
+  return 'http://localhost:8000';
 }
 
 const nextConfig: NextConfig = {
@@ -35,9 +46,9 @@ const nextConfig: NextConfig = {
   // Performance optimizations
   reactStrictMode: false,
 
-  // Environment variables - automatically derived from HF Space config
+  // Environment variables - resolved at build time
   env: {
-    NEXT_PUBLIC_API_URL: getHuggingFaceApiUrl(),
+    NEXT_PUBLIC_API_URL: getApiUrl(),
   },
 
   // Headers for CORS and security

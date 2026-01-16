@@ -9,12 +9,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  ApiStatus,
-  HealthCheckResponse,
-  checkApiHealth,
-  apiConfig,
-} from '@/lib/config/api';
+import { ApiStatus, checkApiHealth } from '@/lib/config/api';
 
 /**
  * Hook configuration options

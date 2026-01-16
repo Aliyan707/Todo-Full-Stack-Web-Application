@@ -8,12 +8,12 @@
  * Left side: Sign In, Right side: Sign Up
  */
 
-import React from 'react';
+import type { ReactNode } from 'react';
 import styles from '@/styles/components/AuthLayout.module.css';
 
 interface AuthLayoutProps {
-  leftContent: React.ReactNode;
-  rightContent: React.ReactNode;
+  leftContent: ReactNode;
+  rightContent: ReactNode;
 }
 
 export default function AuthLayout({ leftContent, rightContent }: AuthLayoutProps) {

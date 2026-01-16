@@ -5,7 +5,6 @@
  * Displays To-Do app SVG illustration for authentication pages.
  */
 
-import React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/components/TodoImagery.module.css';
 

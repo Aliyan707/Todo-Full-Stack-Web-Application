@@ -7,7 +7,6 @@
  * List container for tasks with empty state and loading skeleton.
  */
 
-import React from 'react';
 import { Task } from '@/types/task';
 import TaskItem from './TaskItem';
 import styles from '@/styles/components/TaskList.module.css';

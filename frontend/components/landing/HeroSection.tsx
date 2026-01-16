@@ -7,7 +7,6 @@
  * Hero section with heading, subheading, and CTA buttons.
  */
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import styles from '@/styles/components/HeroSection.module.css';

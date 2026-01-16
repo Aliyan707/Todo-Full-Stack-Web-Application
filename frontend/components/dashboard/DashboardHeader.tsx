@@ -7,7 +7,6 @@
  * Dashboard header with user display name and logout button.
  */
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import { useAuth } from '@/lib/hooks/useAuth';

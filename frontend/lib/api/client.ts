@@ -11,7 +11,7 @@
 
 import { APIError, APIRequestOptions, APIResponse } from '@/types/api';
 import { getAuthToken } from '@/lib/contexts/AuthContext';
-import { apiConfig, getApiUrl, ApiStatus } from '@/lib/config/api';
+import { apiConfig, getApiUrl } from '@/lib/config/api';
 
 /**
  * Sleep utility for retry delays
