@@ -64,14 +64,19 @@ function getHuggingFaceSpaceConfig(): HuggingFaceSpaceConfig | null {
 
 /**
  * Resolve the API base URL with fallback chain:
- * 1. NEXT_PUBLIC_API_URL environment variable
+ * 1. NEXT_PUBLIC_API_URL environment variable (if not localhost in production)
  * 2. Derived from HF Space owner/name
- * 3. Localhost fallback for development
+ * 3. Same-origin API calls (for Vercel rewrites)
+ * 4. Localhost fallback for development
  */
 function resolveApiBaseUrl(): string {
-  // Priority 1: Explicit API URL
+  const isProduction = process.env.NEXT_PUBLIC_ENV === 'production' ||
+                       process.env.NODE_ENV === 'production' ||
+                       (typeof window !== 'undefined' && !window.location.hostname.includes('localhost'));
+
+  // Priority 1: Explicit API URL (not localhost placeholder)
   const explicitUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (explicitUrl && explicitUrl !== 'http://localhost:8000') {
+  if (explicitUrl && !explicitUrl.includes('localhost')) {
     return explicitUrl.replace(/\/$/, ''); // Remove trailing slash
   }
 
@@ -81,7 +86,12 @@ function resolveApiBaseUrl(): string {
     return hfConfig.apiUrl;
   }
 
-  // Priority 3: Localhost fallback
+  // Priority 3: In production, use same-origin (Vercel rewrites handle it)
+  if (isProduction && typeof window !== 'undefined') {
+    return ''; // Empty string = same origin, uses Vercel rewrites
+  }
+
+  // Priority 4: Localhost fallback for development
   return 'http://localhost:8000';
 }
 
