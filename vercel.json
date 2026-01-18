@@ -1,31 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "framework": "nextjs",
-  "installCommand": "cd frontend && npm install",
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/.next",
-  "env": {
-    "NEXT_PUBLIC_API_URL": "https://aliyanahmed-todofullstackwebapplication.hf.space",
-    "NEXT_PUBLIC_ENV": "production",
-    "NEXT_PUBLIC_HF_SPACE_OWNER": "aliyanahmed",
-    "NEXT_PUBLIC_HF_SPACE_NAME": "TodoFullStackWebApplication"
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://aliyanahmed-todofullstackwebapplication.hf.space/api/:path*"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
-      ]
-    }
-  ]
+  "version": 2
 }
