@@ -69,8 +69,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (credentials: UserCredentials): Promise<void> => {
     setIsLoading(true);
     try {
-      // Use centralized API config for proper HuggingFace Space URL handling
-      const response = await fetch(getApiUrl('/api/auth/login'), {
+      // Call the Next.js API route which proxies to backend
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,26 +82,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
         let errorMessage = 'Sign in failed';
         try {
           const errorData = await response.json();
-          errorMessage = errorData.detail || errorData.message || errorMessage;
+          errorMessage = errorData.detail || errorData.message || errorData.error || errorMessage;
         } catch {
-          // Response is not JSON (e.g., "Internal Server Error")
-          errorMessage = `Server error (${response.status}): Please try again later`;
+          // If response is not JSON, use status text
+          errorMessage = `Server error (${response.status}): ${response.statusText}`;
         }
         throw new Error(errorMessage);
       }
 
       const authResponse: AuthResponse = await response.json();
 
+      // Check if the response indicates success
+      if (!authResponse.success) {
+        throw new Error(authResponse.error || 'Sign in failed');
+      }
+
       // Store token and user data
-      const token = authResponse.access_token || authResponse.token;
+      const token = authResponse.access_token || authResponse.session?.id;
       if (token) {
         localStorage.setItem(TOKEN_KEY, token);
       }
       localStorage.setItem(USER_KEY, JSON.stringify(authResponse.user));
       setUser(authResponse.user);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sign in error:', error);
-      throw error;
+      // Re-throw with more specific message
+      if (error.message) {
+        throw error;
+      } else {
+        throw new Error('Network error occurred during sign in');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -110,8 +120,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (registration: UserRegistration): Promise<void> => {
     setIsLoading(true);
     try {
-      // Step 1: Register the user (using centralized API config)
-      const registerResponse = await fetch(getApiUrl('/api/auth/register'), {
+      // Step 1: Register the user (call Next.js API route which proxies to backend)
+      const registerResponse = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,16 +137,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
         let errorMessage = 'Sign up failed';
         try {
           const errorData = await registerResponse.json();
-          errorMessage = errorData.detail || errorData.message || errorMessage;
+          errorMessage = errorData.detail || errorData.message || errorData.error || errorMessage;
         } catch {
-          // Response is not JSON (e.g., "Internal Server Error")
-          errorMessage = `Server error (${registerResponse.status}): Please try again later`;
+          // If response is not JSON, use status text
+          errorMessage = `Server error (${registerResponse.status}): ${registerResponse.statusText}`;
         }
         throw new Error(errorMessage);
       }
 
+      const registerData = await registerResponse.json();
+
+      if (!registerData.success) {
+        throw new Error(registerData.error || 'Registration failed');
+      }
+
       // Step 2: Auto-login after successful registration
-      const loginResponse = await fetch(getApiUrl('/api/auth/login'), {
+      const loginResponse = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -151,25 +167,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
         let errorMessage = 'Auto-login failed after registration';
         try {
           const errorData = await loginResponse.json();
-          errorMessage = errorData.detail || errorData.message || errorMessage;
+          errorMessage = errorData.detail || errorData.message || errorData.error || errorMessage;
         } catch {
-          errorMessage = `Server error (${loginResponse.status}): Please try again later`;
+          errorMessage = `Server error (${loginResponse.status}): ${loginResponse.statusText}`;
         }
         throw new Error(errorMessage);
       }
 
       const authResponse: AuthResponse = await loginResponse.json();
 
+      if (!authResponse.success) {
+        throw new Error(authResponse.error || 'Login after registration failed');
+      }
+
       // Store token and user data
-      const token = authResponse.access_token || authResponse.token;
+      const token = authResponse.access_token || authResponse.session?.id;
       if (token) {
         localStorage.setItem(TOKEN_KEY, token);
       }
       localStorage.setItem(USER_KEY, JSON.stringify(authResponse.user));
       setUser(authResponse.user);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sign up error:', error);
-      throw error;
+      // Re-throw with more specific message
+      if (error.message) {
+        throw error;
+      } else {
+        throw new Error('Network error occurred during sign up');
+      }
     } finally {
       setIsLoading(false);
     }
