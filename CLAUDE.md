@@ -216,6 +216,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 - TypeScript 5.x + Next.js 15 App Router + React 18+ + Better Auth + Tailwind CSS (001-phase-ii-specs - frontend)
 - PostgreSQL (Neon Serverless) with UUID primary keys and user-scoped queries (001-phase-ii-specs - database)
 - TypeScript 5.x with Next.js 15 App Router, React 18+ (003-advanced-todo-ui)
+- Python 3.11 (Backend), TypeScript 5.x (Frontend) + FastAPI, SQLModel, OpenAI Agents SDK, MCP SDK, Better Auth, OpenAI ChatKit (001-ai-todo-specs)
+- Neon PostgreSQL with SQLModel ORM (001-ai-todo-specs)
 
 ## Recent Changes
 - 001-console-todo-app: Added Python 3.8+ + Python standard library only (no external packages)

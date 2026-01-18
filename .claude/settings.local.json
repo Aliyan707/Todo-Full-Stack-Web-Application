@@ -11,7 +11,10 @@
       "Bash(then bash .specify/scripts/bash/check-prerequisites.sh --json)",
       "Bash(else echo '{\"\"error\"\": \"\"Prerequisites script not found\"\"}')",
       "Bash(fi)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(pip show python-mcp)",
+      "Bash(cd:*)",
+      "Skill(sp.implement)"
     ]
   }
 }

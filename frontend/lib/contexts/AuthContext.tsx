@@ -119,6 +119,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         body: JSON.stringify({
           email: registration.email,
           password: registration.password,
+          name: registration.displayName,  // Backend expects 'name' field
         }),
       });
 
@@ -201,7 +202,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
 // Utility function to parse JWT token
 function parseJWT(token: string): { exp?: number } | null {
   try {
-    const base64Url = token.split('.')[1];
+    // Check if token exists and has proper JWT format (3 parts separated by dots)
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      // Not a valid JWT format, but don't treat as error
+      // (our backend uses simple session IDs, not JWTs)
+      return { exp: Date.now() / 1000 + 86400 }; // Assume valid for 24 hours
+    }
+
+    const base64Url = parts[1];
+    if (!base64Url) {
+      return null;
+    }
+
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)

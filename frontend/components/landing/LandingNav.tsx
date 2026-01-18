@@ -69,6 +69,9 @@ export default function LandingNav() {
           <a href="#about" className={styles.navLink}>
             About
           </a>
+          <a href="/chat" className={styles.navLink}>
+            🤖 AI Chat
+          </a>
         </div>
 
         {/* Auth Buttons - Desktop */}
@@ -104,6 +107,9 @@ export default function LandingNav() {
           </a>
           <a href="#about" className={styles.mobileNavLink} onClick={toggleMenu}>
             About
+          </a>
+          <a href="/chat" className={styles.mobileNavLink} onClick={toggleMenu}>
+            🤖 AI Chat
           </a>
           <div className={styles.mobileAuthButtons}>
             <Button variant="ghost" size="md" onClick={handleSignIn}>

@@ -31,9 +31,14 @@ export default function DashboardHeader() {
           <p className={styles.subtitle}>Organize your tasks and stay productive</p>
         </div>
 
-        <Button variant="ghost" size="md" onClick={handleLogout} aria-label="Sign out">
-          Sign Out
-        </Button>
+        <div className={styles.actions}>
+          <Button variant="primary" size="md" onClick={() => router.push('/chat')} aria-label="AI Chat">
+            AI Chat
+          </Button>
+          <Button variant="ghost" size="md" onClick={handleLogout} aria-label="Sign out">
+            Sign Out
+          </Button>
+        </div>
       </div>
     </header>
   );
