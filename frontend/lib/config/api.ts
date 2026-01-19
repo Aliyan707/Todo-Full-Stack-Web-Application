@@ -7,17 +7,22 @@ const BACKEND_URL = "https://aliyanahmed-todofullstackwebapplication.hf.space";
 
 /**
  * Get the full API URL for an endpoint
- * Maintains the original endpoint path for compatibility with Vercel rewrites
+ * Uses direct backend URL in development, relative in production
  */
 export function getApiUrl(endpoint: string): string {
-  // In browser, use relative URLs (Vercel rewrites handle it)
-  // On server or if window not available, use full URL
-  const baseUrl = typeof window !== 'undefined' ? '' : BACKEND_URL;
+  // Check if we're in development mode
+  const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
 
-  // Normalize endpoint to ensure it starts with /
-  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-
-  return `${baseUrl}${normalizedEndpoint}`;
+  if (isDevelopment) {
+    // In development, use direct backend connection
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return `http://localhost:8000${normalizedEndpoint}`;
+  } else {
+    // In production, use relative URLs (Vercel rewrites handle it)
+    const baseUrl = typeof window !== 'undefined' ? '' : BACKEND_URL;
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return `${baseUrl}${normalizedEndpoint}`;
+  }
 }
 
 /**
