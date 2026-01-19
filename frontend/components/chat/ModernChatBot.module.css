@@ -3,28 +3,41 @@
   position: fixed;
   bottom: 30px;
   right: 30px;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a5c47 0%, #0f3d2d 100%);
   border: none;
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 30px rgba(26, 92, 71, 0.5), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 6px #1a5c47;
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 24px;
   overflow: visible;
   align-items: center;
   justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 8px 30px rgba(26, 92, 71, 0.5), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 6px #1a5c47;
+  }
+  50% {
+    box-shadow: 0 10px 35px rgba(26, 92, 71, 0.7), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 8px #1a5c47;
+  }
+  100% {
+    box-shadow: 0 8px 30px rgba(26, 92, 71, 0.5), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 6px #1a5c47;
+  }
 }
 
 .floatingButton:hover {
-  transform: scale(1.1) rotate(10deg);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+  transform: scale(1.2) rotate(20deg);
+  box-shadow: 0 12px 40px rgba(26, 92, 71, 0.8), 0 0 0 4px rgba(255, 255, 255, 0.9), 0 0 0 8px #1a5c47;
 }
 
 .floatingButton:active {
@@ -119,7 +132,7 @@
 
 /* Chat Header */
 .chatHeader {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a5c47 0%, #0f3d2d 100%);
   color: white;
   padding: 16px 20px;
   display: flex;
@@ -195,7 +208,7 @@
 }
 
 .userMessage {
-  background: #667eea;
+  background: linear-gradient(135deg, #1a5c47 0%, #0f3d2d 100%);
   color: white;
   margin-left: auto;
   border-bottom-right-radius: 4px;
@@ -237,7 +250,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #667eea;
+  background: #1a5c47;
   animation: bounce 1.4s infinite ease-in-out both;
 }
 
@@ -342,7 +355,7 @@
 
 .messageInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #1a5c47;
 }
 
 .messageInput:disabled {
@@ -354,18 +367,18 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #667eea;
+  background: linear-gradient(135deg, #1a5c47 0%, #0f3d2d 100%);
   color: white;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.2s, transform 0.1s;
 }
 
 .sendButton:hover:not(:disabled) {
-  background: #5a6fd8;
+  background: linear-gradient(135deg, #0f3d2d 0%, #1a5c47 100%);
   transform: scale(1.05);
 }
 
