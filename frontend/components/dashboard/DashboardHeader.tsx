@@ -7,39 +7,53 @@
  * Dashboard header with user display name and logout button.
  */
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useState } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
+import ChatPopup from '@/components/chat/ChatPopup';
 import styles from '@/styles/components/DashboardHeader.module.css';
 
 export default function DashboardHeader() {
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleLogout = () => {
     signOut();
     router.push('/');
   };
 
-  return (
-    <header className={styles.header}>
-      <div className={styles.container}>
-        <div className={styles.userInfo}>
-          <h1 className={styles.greeting}>
-            Welcome back, <span className={styles.userName}>{user?.displayName || 'User'}</span>
-          </h1>
-          <p className={styles.subtitle}>Organize your tasks and stay productive</p>
-        </div>
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+  };
 
-        <div className={styles.actions}>
-          <Button variant="primary" size="md" onClick={() => router.push('/chat')} aria-label="AI Chat">
-            AI Chat
-          </Button>
-          <Button variant="ghost" size="md" onClick={handleLogout} aria-label="Sign out">
-            Sign Out
-          </Button>
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
+  };
+
+  return (
+    <>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <div className={styles.userInfo}>
+            <h1 className={styles.greeting}>
+              Welcome back, <span className={styles.userName}>{user?.displayName || 'User'}</span>
+            </h1>
+            <p className={styles.subtitle}>Organize your tasks and stay productive</p>
+          </div>
+
+          <div className={styles.actions}>
+            <Button variant="primary" size="md" onClick={handleOpenChat} aria-label="AI Chat">
+              AI Chat
+            </Button>
+            <Button variant="ghost" size="md" onClick={handleLogout} aria-label="Sign out">
+              Sign Out
+            </Button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <ChatPopup isOpen={isChatOpen} onClose={handleCloseChat} />
+    </>
   );
 }
