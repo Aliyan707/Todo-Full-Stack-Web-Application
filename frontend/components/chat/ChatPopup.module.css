@@ -15,9 +15,9 @@
 .popupContainer {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  max-height: 700px;
-  max-width: 500px;
+  height: 60vh;
+  max-height: 500px;
+  max-width: 400px;
   width: 100%;
   background: white;
   border-radius: 12px;

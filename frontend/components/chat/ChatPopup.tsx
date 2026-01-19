@@ -50,7 +50,7 @@ export default function ChatPopup({ isOpen, onClose }: ChatPopupProps) {
         <div className={styles.header}>
           <div className={styles.title}>
             <h2>AI Task Assistant</h2>
-            <p>Ask me to add, list, complete, or delete tasks</p>
+            <p>Professional task management</p>
           </div>
           <Button
             variant="ghost"
@@ -77,10 +77,10 @@ export default function ChatPopup({ isOpen, onClose }: ChatPopupProps) {
                 I'm your AI task assistant. How can I help you today?
               </p>
               <ul className={styles.examplesList}>
-                <li>Add a task to buy groceries</li>
-                <li>Show my tasks</li>
-                <li>Mark task 1 as done</li>
-                <li>Delete task 2</li>
+                <li>Add a task: "Buy groceries"</li>
+                <li>List tasks: "Show my tasks"</li>
+                <li>Complete: "Mark task 1 done"</li>
+                <li>Delete: "Delete task 2"</li>
               </ul>
             </div>
           ) : (
@@ -126,7 +126,7 @@ export default function ChatPopup({ isOpen, onClose }: ChatPopupProps) {
             className={styles.input}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask me to add, list, complete, or delete tasks..."
+            placeholder="Add task: 'Buy groceries' | List tasks: 'Show my tasks' | Complete: 'Mark task 1 done'..."
             rows={2}
             disabled={isLoading}
             onKeyDown={(e) => {
