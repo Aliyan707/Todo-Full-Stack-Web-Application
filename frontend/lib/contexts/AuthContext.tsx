@@ -69,8 +69,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (credentials: UserCredentials): Promise<void> => {
     setIsLoading(true);
     try {
-      // Call the Next.js API route which proxies to backend
-      const response = await fetch('/api/auth/login', {
+      // Determine if we're in development or production to decide the API endpoint
+      const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const apiUrl = isDevelopment
+        ? 'http://localhost:8000/api/auth/login'  // Direct backend call in dev
+        : '/api/auth/login';  // Next.js proxy in prod
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,8 +125,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (registration: UserRegistration): Promise<void> => {
     setIsLoading(true);
     try {
-      // Step 1: Register the user (call Next.js API route which proxies to backend)
-      const registerResponse = await fetch('/api/auth/register', {
+      // Determine if we're in development or production to decide the API endpoint
+      const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+
+      // Step 1: Register the user (call appropriate endpoint based on environment)
+      const registerApiUrl = isDevelopment
+        ? 'http://localhost:8000/api/auth/register'  // Direct backend call in dev
+        : '/api/auth/register';  // Next.js proxy in prod
+
+      const registerResponse = await fetch(registerApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +164,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       // Step 2: Auto-login after successful registration
-      const loginResponse = await fetch('/api/auth/login', {
+      const loginApiUrl = isDevelopment
+        ? 'http://localhost:8000/api/auth/login'  // Direct backend call in dev
+        : '/api/auth/login';  // Next.js proxy in prod
+
+      const loginResponse = await fetch(loginApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
