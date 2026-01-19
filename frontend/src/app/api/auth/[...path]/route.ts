@@ -20,7 +20,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { path:
 async function handleAuthRequest(request: NextRequest, path: string) {
   try {
     // Get the backend URL from environment variables
-    const backendBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const backendBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
     console.log('Proxy debug - Backend URL:', backendBaseUrl); // Debug log
     console.log('Proxy debug - Full backend URL:', `${backendBaseUrl}/api/${path}`); // Debug log
@@ -40,7 +40,7 @@ async function handleAuthRequest(request: NextRequest, path: string) {
       );
     }
 
-    // Construct the full backend URL - backend already has /api prefix via include_router
+    // Construct the full backend URL - the backend expects /api/auth/* routes
     const backendUrl = `${backendBaseUrl}/api/${path}`;
     console.log('Proxy debug - Final backend URL:', backendUrl); // Debug log
 
@@ -56,7 +56,7 @@ async function handleAuthRequest(request: NextRequest, path: string) {
     const headers: Record<string, string> = {};
     request.headers.forEach((value, key) => {
       // Skip certain headers that should not be forwarded
-      if (!['content-length', 'host'].includes(key.toLowerCase())) {
+      if (!['content-length', 'host', 'authorization'].includes(key.toLowerCase())) {
         headers[key] = value;
       }
     });
@@ -78,13 +78,10 @@ async function handleAuthRequest(request: NextRequest, path: string) {
 
     console.log('Proxy debug - Backend response status:', backendResponse.status); // Debug log
 
-    // Clone the response to get headers
-    const responseClone = backendResponse.clone();
-
     // Get the response data
     let responseData;
     try {
-      responseData = await responseClone.json();
+      responseData = await backendResponse.json();
       console.log('Proxy debug - Backend response parsed successfully'); // Debug log
     } catch (error) {
       console.error('Error parsing backend response JSON:', error);
