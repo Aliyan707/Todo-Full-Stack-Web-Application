@@ -15,6 +15,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import AddTaskForm from '@/components/dashboard/AddTaskForm';
 import TaskList from '@/components/dashboard/TaskList';
 import EditTaskModal from '@/components/dashboard/EditTaskModal';
+import FloatingChatButton from '@/components/chat/FloatingChatButton';
 import { Task } from '@/types/task';
 
 export default function DashboardPage() {
@@ -134,6 +135,8 @@ export default function DashboardPage() {
         onClose={handleCloseEdit}
         onSave={handleSaveEdit}
       />
+
+      <FloatingChatButton />
     </div>
   );
 }
