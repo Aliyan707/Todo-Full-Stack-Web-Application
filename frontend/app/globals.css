@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Global CSS Variables - Dark Green Theme */
 /* Advanced To-Do Application UI - 003-advanced-todo-ui */
 
