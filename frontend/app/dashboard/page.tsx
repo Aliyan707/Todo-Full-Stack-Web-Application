@@ -47,6 +47,9 @@ export default function DashboardPage() {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number }>>([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium' as const });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{ role: 'user' | 'ai'; message: string }>>([]);
 
   // Generate particles on mount
   useEffect(() => {
@@ -92,6 +95,104 @@ export default function DashboardPage() {
 
   const deleteTask = (id: string) => {
     setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatMessage.trim()) return;
+
+    const userMessage = chatMessage.toLowerCase();
+
+    // Add user message
+    const newHistory = [...chatHistory, { role: 'user' as const, message: chatMessage }];
+    setChatHistory(newHistory);
+    setChatMessage('');
+
+    // Process AI response based on user input
+    setTimeout(() => {
+      let aiResponse = '';
+
+      // Create task
+      if (userMessage.includes('create') || userMessage.includes('add') || userMessage.includes('new task')) {
+        const taskTitle = chatMessage.replace(/create|add|new task|task/gi, '').trim();
+        if (taskTitle) {
+          const newTask: Task = {
+            id: Date.now().toString(),
+            title: taskTitle || 'New Task',
+            description: 'Created by AI Assistant',
+            completed: false,
+            priority: 'medium',
+            createdAt: new Date(),
+          };
+          setTasks(prev => [newTask, ...prev]);
+          aiResponse = `✅ Task created: "${taskTitle}". I've added it to your task list with medium priority.`;
+        } else {
+          aiResponse = 'Please specify the task title. Example: "Create project proposal"';
+        }
+      }
+      // List tasks
+      else if (userMessage.includes('list') || userMessage.includes('show') || userMessage.includes('my tasks')) {
+        const pendingTasks = tasks.filter(t => !t.completed);
+        if (pendingTasks.length > 0) {
+          aiResponse = `📋 You have ${pendingTasks.length} pending tasks:\n\n${pendingTasks.slice(0, 5).map((t, i) =>
+            `${i + 1}. ${t.title} (${t.priority} priority)`
+          ).join('\n')}`;
+        } else {
+          aiResponse = '🎉 Great! You have no pending tasks. Time to relax or create new ones!';
+        }
+      }
+      // Statistics
+      else if (userMessage.includes('stat') || userMessage.includes('progress') || userMessage.includes('summary')) {
+        const completed = tasks.filter(t => t.completed).length;
+        const pending = tasks.filter(t => !t.completed).length;
+        const highPriority = tasks.filter(t => t.priority === 'high' && !t.completed).length;
+        aiResponse = `📊 Your Statistics:\n\n✅ Completed: ${completed}\n⏳ Pending: ${pending}\n🔥 High Priority: ${highPriority}\n📋 Total Tasks: ${tasks.length}`;
+      }
+      // Complete task
+      else if (userMessage.includes('complete') || userMessage.includes('done') || userMessage.includes('finish')) {
+        const incompleteTasks = tasks.filter(t => !t.completed);
+        if (incompleteTasks.length > 0) {
+          const taskToComplete = incompleteTasks[0];
+          setTasks(tasks.map(t =>
+            t.id === taskToComplete.id ? { ...t, completed: true } : t
+          ));
+          aiResponse = `✅ Marked "${taskToComplete.title}" as completed! Great job! 🎉`;
+        } else {
+          aiResponse = 'All tasks are already completed! 🎉';
+        }
+      }
+      // Delete task
+      else if (userMessage.includes('delete') || userMessage.includes('remove')) {
+        if (tasks.length > 0) {
+          const lastTask = tasks[0];
+          setTasks(tasks.filter(t => t.id !== lastTask.id));
+          aiResponse = `🗑️ Deleted task: "${lastTask.title}"`;
+        } else {
+          aiResponse = 'No tasks to delete.';
+        }
+      }
+      // High priority
+      else if (userMessage.includes('priority') || userMessage.includes('important')) {
+        const highPriorityTasks = tasks.filter(t => t.priority === 'high' && !t.completed);
+        if (highPriorityTasks.length > 0) {
+          aiResponse = `🔥 High Priority Tasks (${highPriorityTasks.length}):\n\n${highPriorityTasks.map((t, i) =>
+            `${i + 1}. ${t.title}`
+          ).join('\n')}`;
+        } else {
+          aiResponse = '✨ No high priority tasks! Everything is under control.';
+        }
+      }
+      // Help
+      else if (userMessage.includes('help') || userMessage.includes('what can you do')) {
+        aiResponse = `🤖 I can help you with:\n\n✨ "Create [task name]" - Add new task\n📋 "List my tasks" - Show all tasks\n✅ "Complete task" - Mark first task done\n🗑️ "Delete task" - Remove latest task\n🔥 "Show priority tasks" - High priority items\n📊 "Show statistics" - Your progress\n\nTry saying: "Create meeting notes"`;
+      }
+      // Default response
+      else {
+        aiResponse = `I'm your AI task assistant! 🤖\n\nI can help you:\n• Create tasks\n• Mark tasks complete\n• Show statistics\n• List priorities\n\nTry: "Create project proposal" or "Show my tasks"`;
+      }
+
+      setChatHistory(prev => [...prev, { role: 'ai', message: aiResponse }]);
+    }, 500);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -533,6 +634,173 @@ export default function DashboardPage() {
             )}
           </div>
         </main>
+
+        {/* AI Chatbot Floating Button */}
+        <button
+          onClick={() => setShowChatbot(!showChatbot)}
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+            border: 'none',
+            boxShadow: '0 10px 40px rgba(59, 130, 246, 0.6)',
+            fontSize: '1.75rem',
+            cursor: 'pointer',
+            zIndex: 1000,
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 15px 50px rgba(59, 130, 246, 0.8)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 10px 40px rgba(59, 130, 246, 0.6)';
+          }}
+        >
+          {showChatbot ? '✕' : '🤖'}
+        </button>
+
+        {/* AI Chatbot Modal */}
+        {showChatbot && (
+          <div style={{
+            position: 'fixed',
+            bottom: '6rem',
+            right: '2rem',
+            width: '400px',
+            height: '550px',
+            background: 'rgba(26, 26, 26, 0.98)',
+            backdropFilter: 'blur(30px)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.7)',
+            zIndex: 999,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}>
+            {/* Chatbot Header */}
+            <div style={{
+              padding: '1.25rem',
+              borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
+              background: 'rgba(59, 130, 246, 0.1)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ fontSize: '2rem' }}>🤖</div>
+                <div>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.25rem' }}>
+                    AI Assistant
+                  </h3>
+                  <p style={{ fontSize: '0.8125rem', color: '#9ca3af' }}>
+                    Always ready to help
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Chat Messages */}
+            <div style={{
+              flex: 1,
+              padding: '1.25rem',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}>
+              {chatHistory.length === 0 && (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '2rem 1rem',
+                  color: '#6b7280',
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👋</div>
+                  <p style={{ fontSize: '0.9375rem', lineHeight: '1.6' }}>
+                    Hi! I'm your AI assistant. Ask me anything about your tasks!
+                  </p>
+                </div>
+              )}
+
+              {chatHistory.map((chat, index) => (
+                <div
+                  key={index}
+                  style={{
+                    alignSelf: chat.role === 'user' ? 'flex-end' : 'flex-start',
+                    maxWidth: '80%',
+                  }}
+                >
+                  <div style={{
+                    padding: '0.875rem 1.125rem',
+                    borderRadius: '12px',
+                    background: chat.role === 'user'
+                      ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                      : 'rgba(55, 65, 81, 0.5)',
+                    fontSize: '0.9375rem',
+                    lineHeight: '1.6',
+                  }}>
+                    {chat.message}
+                  </div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: '#6b7280',
+                    marginTop: '0.375rem',
+                    textAlign: chat.role === 'user' ? 'right' : 'left',
+                  }}>
+                    {chat.role === 'user' ? 'You' : 'AI'}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Chat Input */}
+            <form
+              onSubmit={handleChatSubmit}
+              style={{
+                padding: '1rem',
+                borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+                background: 'rgba(17, 17, 17, 0.5)',
+              }}
+            >
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <input
+                  type="text"
+                  placeholder="Ask me anything..."
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                  style={{
+                    flex: 1,
+                    background: '#1f2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    padding: '0.75rem',
+                    fontSize: '0.9375rem',
+                    color: '#e5e7eb',
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1.25rem',
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  →
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
