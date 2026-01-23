@@ -1,5 +1,5 @@
-/* Dashdark X Theme - Pure CSS (No Tailwind) */
-/* Dark modern dashboard theme with sidebar-ready layout */
+/* Interactive AI Dark Theme - Dashdark X Style */
+/* Emergency fix: Enhanced dark dashboard with interactive elements */
 
 /* Base reset */
 * {
@@ -8,22 +8,21 @@
   margin: 0;
 }
 
-/* Root body styles - Deep black theme */
+/* Root styles - Deep black AI dashboard */
+html {
+  background: #0a0a0a;
+  overflow-x: hidden;
+}
+
 body {
-  background: #0f0f0f;
-  color: #e0e0e0;
+  background: #0a0a0a;
+  color: #d1d5db;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
-  padding: 0;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-}
-
-html {
-  background: #0f0f0f;
-  overflow-x: hidden;
 }
 
 /* Main content container - centered with max-width */
@@ -33,17 +32,23 @@ main {
   padding: 2rem;
 }
 
-/* Sidebar structure - left navigation area */
+/* Sidebar structure - fixed left navigation with interactive hover */
 .sidebar {
-  width: 280px;
-  background: #1a1a1a;
-  height: 100vh;
   position: fixed;
-  padding: 1.5rem;
-  border-right: 1px solid #2a2a2a;
-  top: 0;
   left: 0;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  background: #111111;
+  border-right: 1px solid #1f2937;
+  padding: 1.5rem;
+  overflow-y: auto;
   z-index: 100;
+  transition: width 0.3s ease;
+}
+
+.sidebar:hover {
+  width: 300px;
 }
 
 /* Content area with sidebar offset */
@@ -52,17 +57,23 @@ main {
   padding: 2rem;
 }
 
-/* Card component - modern with borders and shadows */
+/* Card component - interactive with hover effects */
 .card {
-  background: #1e1a2e;
-  border: 1px solid #2a2a3a;
+  background: #1a1a1a;
+  border: 1px solid #2d3748;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   margin-bottom: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Button styles - blue accent */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+}
+
+/* Button styles - blue accent with smooth transitions */
 button {
   background: #3b82f6;
   color: white;
@@ -71,79 +82,152 @@ button {
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s ease;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
   background: #2563eb;
+  transform: translateY(-1px);
 }
 
 button:active {
   background: #1d4ed8;
+  transform: translateY(0);
 }
 
-/* Input styles - dark theme */
+button:disabled {
+  background: #374151;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Input styles - dark theme with focus effects */
 input {
-  background: #1a1a1a;
-  border: 1px solid #3a3a4a;
-  color: #e0e0e0;
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
   padding: 0.75rem;
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus {
   outline: none;
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 input::placeholder {
-  color: #6b6b6b;
+  color: #6b7280;
 }
 
 /* Textarea styles */
 textarea {
-  background: #1a1a1a;
-  border: 1px solid #3a3a4a;
-  color: #e0e0e0;
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
   padding: 0.75rem;
   border-radius: 8px;
   width: 100%;
   font-size: 1rem;
   font-family: inherit;
   line-height: 1.6;
-  transition: border-color 0.2s ease;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 textarea:focus {
   outline: none;
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Link styles */
+/* Select dropdown styles */
+select {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Link styles with smooth transitions */
 a {
   color: #3b82f6;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 a:hover {
   color: #60a5fa;
+  opacity: 0.9;
 }
 
-/* Headings */
+/* Headings with proper hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  color: #ffffff;
+  color: #f9fafb;
   margin-bottom: 1rem;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 h1 { font-size: 2.5rem; }
 h2 { font-size: 2rem; }
 h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+/* Paragraph spacing */
+p {
+  margin-bottom: 1rem;
+}
+
+/* List styles */
+ul, ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* Code blocks */
+code {
+  background: #1f2937;
+  color: #60a5fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'Courier New', monospace;
+}
+
+pre {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
 
 /* Scrollbar styling - dark theme */
 ::-webkit-scrollbar {
@@ -152,20 +236,26 @@ h3 { font-size: 1.5rem; }
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #111111;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3a3a4a;
+  background: #374151;
   border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a5a;
+  background: #4b5563;
 }
 
-/* Selection color */
+/* Selection color with blue accent */
 ::selection {
+  background: #3b82f6;
+  color: white;
+}
+
+::-moz-selection {
   background: #3b82f6;
   color: white;
 }
@@ -174,6 +264,94 @@ h3 { font-size: 1.5rem; }
 *:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+/* Loading spinner utility */
+.spinner {
+  border: 3px solid #374151;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Utility classes for common patterns */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-block;
+  background: #374151;
+  color: #e5e7eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+/* Alert/notification styles */
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+}
+
+.alert-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.alert-success {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: #22c55e;
+  color: #86efac;
+}
+
+.alert-warning {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: #fbbf24;
+  color: #fde68a;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  color: #fca5a5;
 }
 
 /* Reduced motion support */
@@ -194,7 +372,11 @@ h3 { font-size: 1.5rem; }
     position: relative;
     height: auto;
     border-right: none;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .sidebar:hover {
+    width: 100%;
   }
 
   .content {
@@ -209,4 +391,25 @@ h3 { font-size: 1.5rem; }
   h1 { font-size: 2rem; }
   h2 { font-size: 1.5rem; }
   h3 { font-size: 1.25rem; }
+
+  .card {
+    padding: 1rem;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+  main {
+    padding: 1.5rem;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
 }
