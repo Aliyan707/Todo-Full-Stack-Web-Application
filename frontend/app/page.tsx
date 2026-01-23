@@ -1,354 +1,468 @@
 /**
- * Modern Landing Page - AI Todo Application
- * Beautiful dark theme with signin/signup cards
+ * Beautiful Landing Page - AI Todo Application
+ * Interactive particles background - No auth forms
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-  });
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number }>>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Redirect to dashboard for now
-    router.push('/dashboard');
-  };
+  // Generate particles on mount
+  useEffect(() => {
+    const generateParticles = () => {
+      const newParticles = [];
+      for (let i = 0; i < 60; i++) {
+        newParticles.push({
+          id: i,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          size: Math.random() * 5 + 2,
+          duration: Math.random() * 20 + 10,
+        });
+      }
+      setParticles(newParticles);
+    };
+    generateParticles();
+  }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
-      {/* Header Navigation */}
-      <nav style={{
-        padding: '1.5rem 2rem',
-        borderBottom: '1px solid #1f2937',
-        background: '#111111',
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 75%, #0a0a0a 100%)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Animated Particles Background */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 0,
       }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-          <h1 style={{
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>
-            AI Todo App
-          </h1>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button
-              onClick={() => setActiveTab('signin')}
-              style={{
-                background: activeTab === 'signin' ? '#3b82f6' : 'transparent',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #374151',
-              }}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setActiveTab('signup')}
-              style={{
-                background: activeTab === 'signup' ? '#3b82f6' : 'transparent',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #374151',
-              }}
-            >
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </nav>
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            style={{
+              position: 'absolute',
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              background: 'rgba(59, 130, 246, 0.6)',
+              borderRadius: '50%',
+              animation: `float ${particle.duration}s infinite ease-in-out`,
+              boxShadow: '0 0 15px rgba(59, 130, 246, 0.6)',
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Hero Section with Auth Cards */}
-      <main style={{ padding: '4rem 2rem' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          {/* Hero Content */}
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{
-              fontSize: '3.5rem',
-              fontWeight: '800',
-              marginBottom: '1.5rem',
-              background: 'linear-gradient(135deg, #f9fafb 0%, #9ca3af 100%)',
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.3; }
+          50% { transform: translateY(-25px) translateX(15px) scale(1.2); opacity: 0.9; }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+      `}</style>
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Header Navigation */}
+        <nav style={{
+          padding: '1.5rem 2rem',
+          background: 'rgba(17, 17, 17, 0.7)',
+          backdropFilter: 'blur(15px)',
+          borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
+        }}>
+          <div style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+            <h1 style={{
+              fontSize: '2rem',
+              fontWeight: '900',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              lineHeight: '1.2',
+              letterSpacing: '-1px',
             }}>
-              Manage Tasks with AI
-            </h2>
-            <p style={{
-              fontSize: '1.25rem',
-              color: '#9ca3af',
-              maxWidth: '600px',
-              margin: '0 auto',
-              lineHeight: '1.6',
-            }}>
-              Intelligent todo management powered by AI. Organize, prioritize, and accomplish more with smart automation.
-            </p>
+              ✨ AI Todo
+            </h1>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                onClick={() => router.push('/signin')}
+                style={{
+                  background: 'transparent',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(59, 130, 246, 0.5)',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
+                  e.currentTarget.style.borderColor = '#3b82f6';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                }}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => router.push('/signup')}
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 25px rgba(59, 130, 246, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.4)';
+                }}
+              >
+                Get Started
+              </button>
+            </div>
           </div>
+        </nav>
 
-          {/* Auth Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-            gap: '2rem',
-            maxWidth: '900px',
-            margin: '0 auto',
-          }}>
-            {/* Sign In Card */}
-            <div
-              className="card"
-              style={{
-                display: activeTab === 'signin' ? 'block' : 'none',
-                padding: '2rem',
-              }}
-            >
-              <h3 style={{
-                fontSize: '1.875rem',
-                fontWeight: '700',
-                marginBottom: '0.5rem',
-                color: '#f9fafb',
-              }}>
-                Welcome Back
-              </h3>
-              <p style={{
-                color: '#9ca3af',
+        {/* Hero Section */}
+        <main style={{ padding: '6rem 2rem' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+            {/* Main Hero Content */}
+            <div style={{ marginBottom: '4rem' }}>
+              <div style={{
+                display: 'inline-block',
+                padding: '0.5rem 1.5rem',
+                background: 'rgba(59, 130, 246, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '50px',
                 marginBottom: '2rem',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: '#60a5fa',
+                letterSpacing: '0.5px',
               }}>
-                Sign in to access your tasks
+                🚀 AI-POWERED PRODUCTIVITY
+              </div>
+
+              <h2 style={{
+                fontSize: '5rem',
+                fontWeight: '900',
+                marginBottom: '2rem',
+                background: 'linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                lineHeight: '1.1',
+                letterSpacing: '-3px',
+              }}>
+                Organize Your Life<br/>
+                <span style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}>
+                  with Intelligence
+                </span>
+              </h2>
+
+              <p style={{
+                fontSize: '1.5rem',
+                color: '#9ca3af',
+                maxWidth: '800px',
+                margin: '0 auto 3rem',
+                lineHeight: '1.8',
+                fontWeight: '400',
+              }}>
+                Transform the way you manage tasks with AI-powered insights,
+                smart prioritization, and beautiful design that makes productivity effortless.
               </p>
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div>
-                  <label style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    color: '#d1d5db',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}>
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    color: '#d1d5db',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}>
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <button type="submit" style={{ marginTop: '0.5rem' }}>
+              {/* CTA Buttons */}
+              <div style={{
+                display: 'flex',
+                gap: '1.5rem',
+                justifyContent: 'center',
+                marginBottom: '3rem',
+              }}>
+                <button
+                  onClick={() => router.push('/signup')}
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    padding: '1.25rem 3rem',
+                    borderRadius: '12px',
+                    border: 'none',
+                    fontWeight: '700',
+                    fontSize: '1.25rem',
+                    boxShadow: '0 10px 40px rgba(59, 130, 246, 0.5)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.boxShadow = '0 15px 50px rgba(59, 130, 246, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 10px 40px rgba(59, 130, 246, 0.5)';
+                  }}
+                >
+                  Start Free Today →
+                </button>
+                <button
+                  onClick={() => router.push('/signin')}
+                  style={{
+                    background: 'transparent',
+                    padding: '1.25rem 3rem',
+                    borderRadius: '12px',
+                    border: '2px solid #374151',
+                    fontWeight: '700',
+                    fontSize: '1.25rem',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#3b82f6';
+                    e.currentTarget.style.background = 'rgba(59, 130, 246, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#374151';
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
                   Sign In
                 </button>
+              </div>
 
-                <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
-                  Don't have an account?{' '}
-                  <span
-                    onClick={() => setActiveTab('signup')}
-                    style={{ color: '#3b82f6', cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    Sign up
-                  </span>
-                </p>
-              </form>
+              {/* Trust Indicators */}
+              <div style={{
+                display: 'flex',
+                gap: '3rem',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: '#6b7280',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+              }}>
+                <div>✅ Free to start</div>
+                <div>⚡ Lightning fast</div>
+                <div>🔒 Secure & Private</div>
+              </div>
             </div>
 
-            {/* Sign Up Card */}
-            <div
-              className="card"
-              style={{
-                display: activeTab === 'signup' ? 'block' : 'none',
-                padding: '2rem',
-              }}
-            >
+            {/* Features Grid */}
+            <div style={{
+              marginTop: '8rem',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '2rem',
+            }}>
+              <div
+                className="card"
+                style={{
+                  textAlign: 'center',
+                  background: 'rgba(26, 26, 26, 0.7)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  padding: '3rem 2rem',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.borderColor = '#3b82f6';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.2)';
+                }}
+              >
+                <div style={{
+                  fontSize: '4rem',
+                  marginBottom: '1.5rem',
+                }}>🤖</div>
+                <h4 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>
+                  AI-Powered Intelligence
+                </h4>
+                <p style={{ color: '#9ca3af', lineHeight: '1.7', fontSize: '1.0625rem' }}>
+                  Smart task suggestions, automatic prioritization, and intelligent scheduling powered by advanced AI
+                </p>
+              </div>
+
+              <div
+                className="card"
+                style={{
+                  textAlign: 'center',
+                  background: 'rgba(26, 26, 26, 0.7)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  padding: '3rem 2rem',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.borderColor = '#3b82f6';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.2)';
+                }}
+              >
+                <div style={{
+                  fontSize: '4rem',
+                  marginBottom: '1.5rem',
+                }}>⚡</div>
+                <h4 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>
+                  Lightning Performance
+                </h4>
+                <p style={{ color: '#9ca3af', lineHeight: '1.7', fontSize: '1.0625rem' }}>
+                  Blazing fast interface with real-time synchronization across all your devices instantly
+                </p>
+              </div>
+
+              <div
+                className="card"
+                style={{
+                  textAlign: 'center',
+                  background: 'rgba(26, 26, 26, 0.7)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  padding: '3rem 2rem',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.borderColor = '#3b82f6';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.2)';
+                }}
+              >
+                <div style={{
+                  fontSize: '4rem',
+                  marginBottom: '1.5rem',
+                }}>🎨</div>
+                <h4 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>
+                  Beautiful Experience
+                </h4>
+                <p style={{ color: '#9ca3af', lineHeight: '1.7', fontSize: '1.0625rem' }}>
+                  Stunning dark theme with smooth animations and intuitive design that makes work enjoyable
+                </p>
+              </div>
+            </div>
+
+            {/* Stats Section */}
+            <div style={{
+              marginTop: '8rem',
+              padding: '4rem 2rem',
+              background: 'rgba(26, 26, 26, 0.6)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+              borderRadius: '16px',
+            }}>
               <h3 style={{
-                fontSize: '1.875rem',
-                fontWeight: '700',
-                marginBottom: '0.5rem',
-                color: '#f9fafb',
+                fontSize: '2.5rem',
+                fontWeight: '800',
+                marginBottom: '3rem',
               }}>
-                Create Account
+                Trusted by Productive People
               </h3>
-              <p style={{
-                color: '#9ca3af',
-                marginBottom: '2rem',
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '3rem',
               }}>
-                Start your productivity journey today
-              </p>
-
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
-                  <label style={{
-                    display: 'block',
+                  <div style={{
+                    fontSize: '3rem',
+                    fontWeight: '900',
+                    color: '#3b82f6',
                     marginBottom: '0.5rem',
-                    color: '#d1d5db',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}>
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
+                  }}>10K+</div>
+                  <div style={{ color: '#9ca3af', fontSize: '1.125rem' }}>Active Users</div>
                 </div>
-
                 <div>
-                  <label style={{
-                    display: 'block',
+                  <div style={{
+                    fontSize: '3rem',
+                    fontWeight: '900',
+                    color: '#3b82f6',
                     marginBottom: '0.5rem',
-                    color: '#d1d5db',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}>
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                  />
+                  }}>1M+</div>
+                  <div style={{ color: '#9ca3af', fontSize: '1.125rem' }}>Tasks Completed</div>
                 </div>
-
                 <div>
-                  <label style={{
-                    display: 'block',
+                  <div style={{
+                    fontSize: '3rem',
+                    fontWeight: '900',
+                    color: '#3b82f6',
                     marginBottom: '0.5rem',
-                    color: '#d1d5db',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}>
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Create a strong password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                  />
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                    Must be at least 8 characters with uppercase, lowercase, and numbers
-                  </p>
+                  }}>99.9%</div>
+                  <div style={{ color: '#9ca3af', fontSize: '1.125rem' }}>Uptime</div>
                 </div>
-
-                <button type="submit" style={{ marginTop: '0.5rem' }}>
-                  Create Account
-                </button>
-
-                <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
-                  Already have an account?{' '}
-                  <span
-                    onClick={() => setActiveTab('signin')}
-                    style={{ color: '#3b82f6', cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    Sign in
-                  </span>
-                </p>
-              </form>
+              </div>
             </div>
           </div>
+        </main>
 
-          {/* Features Section */}
+        {/* Footer */}
+        <footer style={{
+          marginTop: '8rem',
+          padding: '3rem 2rem',
+          textAlign: 'center',
+          borderTop: '1px solid rgba(59, 130, 246, 0.1)',
+          color: '#6b7280',
+          background: 'rgba(17, 17, 17, 0.5)',
+        }}>
+          <p style={{ fontSize: '1rem', marginBottom: '1rem' }}>
+            © 2026 AI Todo App. Built with Next.js, AI & ❤️
+          </p>
           <div style={{
-            marginTop: '6rem',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            display: 'flex',
             gap: '2rem',
-            maxWidth: '1200px',
-            margin: '6rem auto 0',
+            justifyContent: 'center',
+            fontSize: '0.875rem',
           }}>
-            <div className="card" style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '3rem',
-                marginBottom: '1rem',
-              }}>🤖</div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem' }}>
-                AI-Powered
-              </h4>
-              <p style={{ color: '#9ca3af', lineHeight: '1.6' }}>
-                Intelligent task suggestions and smart prioritization
-              </p>
-            </div>
-
-            <div className="card" style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '3rem',
-                marginBottom: '1rem',
-              }}>⚡</div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem' }}>
-                Lightning Fast
-              </h4>
-              <p style={{ color: '#9ca3af', lineHeight: '1.6' }}>
-                Blazing fast performance with instant sync
-              </p>
-            </div>
-
-            <div className="card" style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '3rem',
-                marginBottom: '1rem',
-              }}>🎨</div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem' }}>
-                Beautiful Design
-              </h4>
-              <p style={{ color: '#9ca3af', lineHeight: '1.6' }}>
-                Modern dark theme with smooth animations
-              </p>
-            </div>
+            <a href="#" style={{ color: '#9ca3af', transition: 'color 0.2s' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#3b82f6'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
+            >Privacy</a>
+            <a href="#" style={{ color: '#9ca3af', transition: 'color 0.2s' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#3b82f6'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
+            >Terms</a>
+            <a href="#" style={{ color: '#9ca3af', transition: 'color 0.2s' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#3b82f6'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
+            >Contact</a>
           </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer style={{
-        marginTop: '6rem',
-        padding: '2rem',
-        textAlign: 'center',
-        borderTop: '1px solid #1f2937',
-        color: '#6b7280',
-      }}>
-        <p>© 2026 AI Todo App. Built with Next.js & AI.</p>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
